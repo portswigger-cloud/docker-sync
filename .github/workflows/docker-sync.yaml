@@ -20,18 +20,13 @@ jobs:
       id-token: write
 
     steps:
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Sync ${{ matrix.docker-repo }} images
         uses: titenkov/docker-sync-action@v1
         with:
           source: ${{ matrix.docker-repo }}
           destination: ghcr.io/portswigger-cloud/${{ matrix.docker-repo }}
+          destination-credentials: ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}
+
 
 
 
