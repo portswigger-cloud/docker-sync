@@ -1,3 +1,5 @@
+name: Docker Sync
+
 on:
   workflow_dispatch: {}
 
@@ -30,8 +32,6 @@ jobs:
         with:
           source: ${{ matrix.docker-repo }}
           destination: ghcr.io/portswigger-cloud/${{ matrix.docker-repo }}
-          destination-credentials: titenkov:${{ secrets.GH_TOKEN }}
-
 
 
 
