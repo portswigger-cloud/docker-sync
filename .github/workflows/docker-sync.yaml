@@ -20,11 +20,15 @@ jobs:
       id-token: write
 
     steps:
+      - id: repo
+        run: |
+          echo "name=$(echo ${{ matrix.docker-repo }} | cut -d'/' -f1)" >> $GITHUB_OUTPUT
+
       - name: Sync ${{ matrix.docker-repo }} images
         uses: titenkov/docker-sync-action@v1
         with:
           source: ${{ matrix.docker-repo }}
-          destination: ghcr.io/portswigger-cloud/${{ matrix.docker-repo }}
+          destination: ghcr.io/${{ github.repository_owner }}/${{ steps.repo.outputs.name }}
           destination-credentials: ${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}
 
 
