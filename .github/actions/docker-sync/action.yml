@@ -41,7 +41,7 @@ runs:
               regctl image copy \
                   ${{ inputs.source }}:$version \
                   ${{ inputs.destination }}:$version
-              break
+              continue
           fi
 
           # Only copy if it isn't there already
