@@ -36,10 +36,19 @@ runs:
               break
           fi
 
-          # Only copy if it isn't there already.
+          if [ "$version" = "latest" ]; then
+              # Always copy "latest"
+              regctl image copy \
+                  ${{ inputs.source }}:$version \
+                  ${{ inputs.destination }}:$version
+              break
+          fi
+
+          # Only copy if it isn't there already
           skopeo inspect docker://${{ inputs.destination }}:$version >/dev/null 2>&1 || \
           regctl image copy \
               ${{ inputs.source }}:$version \
               ${{ inputs.destination }}:$version
+
       done
 
