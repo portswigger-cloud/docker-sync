@@ -37,13 +37,7 @@ runs:
           fi
 
           # Only copy if it isn't there already.
-          skopeo inspect docker://${{ inputs.destination }}:$version >/dev/null 2>&1
-          image_exists=$?
-
-          if [ "$image_exists" = "0" ]; then
-              break
-          fi
-
+          skopeo inspect docker://${{ inputs.destination }}:$version >/dev/null 2>&1 || \
           regctl image copy \
               ${{ inputs.source }}:$version \
               ${{ inputs.destination }}:$version
