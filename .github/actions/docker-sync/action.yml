@@ -13,86 +13,39 @@ inputs:
   destination:
     description: destination image repository
     required: true
-  source-transport:
-    description: source transport type (containers-storage,dir,docker,docker-archive,docker-daemon,oci,oci-archive,ostree,tarball)
-    required: false
-    default: docker
-  destination-transport:
-    description: destination transport type (containers-storage,dir,docker,docker-archive,docker-daemon,oci,oci-archive,ostree,tarball)
-    required: false
-    default: docker
-  source-credentials:
-    description: source credentials
-    required: false
-    default: 'null'
-  destination-credentials:
-    description: destination credentials
-    required: false
-    default: 'null'
-  source-tls:
-    description: require HTTPS and verify certificates when talking to the container registry or daemon
-    required: false
-    default: 'false'
-  destination-tls:
-    description: require HTTPS and verify certificates when talking to the container registry or daemon
-    required: false
-    default: 'false'
-  format:
-    description: MANIFEST TYPE (oci, v2s1, or v2s2) to use in the destination (default is manifest type of source, with fallbacks)
-    required: false
-    default: v2s2
   max-tags:
     description: The maximum number of image tags to sync
     required: false
     default: '10'
-  skopeo-version:
-    description: The version of skopeo to use
-    required: false
-    default: '1.16.0'
+
 runs:
   using: composite
   steps:
-  - shell: bash
+  - name: Install regctl
+    uses: iarekylew00t/regctl-installer@v1.2
+  - name: Sync images
+    shell: bash
     run: |
-      wget https://github.com/lework/skopeo-binary/releases/download/v${{ inputs.skopeo-version }}/skopeo-linux-amd64 -O ./skopeo
-      chmod +x ./skopeo
+      skopeo --version
 
-      ./skopeo --version
-
-      if [ "${{ inputs.source-transport }}" = "dir" ]; then
-        SOURCE_DELIMITER=":/"
-      elif [ "${{ inputs.source-transport }}" = "docker" ]; then
-        SOURCE_DELIMITER="://"
-      else
-        SOURCE_DELIMITER=":"
-      fi
-
-      if [ "${{ inputs.destination-transport }}" = "dir" ]; then
-        DESTINATION_DELIMITER=":/"
-      elif [ "${{ inputs.destination-transport }}" = "docker" ]; then
-        DESTINATION_DELIMITER="://"
-      else
-        DESTINATION_DELIMITER=":"
-      fi
-
-      VERSIONS="$(./skopeo list-tags ${{ inputs.source-transport }}${SOURCE_DELIMITER}${{ inputs.source }} | jq -r ".Tags[]" | sort --version-sort | tail -n ${{ inputs.max-tags }})"
+      VERSIONS="$(skopeo list-tags docker://${{ inputs.source }} | jq -r ".Tags[]" | sort --version-sort | tail -n ${{ inputs.max-tags }})"
 
       echo "${VERSIONS}" | while read version ; do
 
           if [ "$version" = "" ]; then
-            break
+              break
           fi
 
           # Only copy if it isn't there already.
-          ./skopeo inspect ${{ inputs.destination-transport }}${DESTINATION_DELIMITER}${{ inputs.destination }}:$version >/dev/null 2>&1 \
-              || ./skopeo copy --multi-arch all \
-                  --format ${{ inputs.format }} \
-                  --src-tls-verify=${{ inputs.source-tls }} \
-                  --src-creds=${{ inputs.source-credentials }} \
-                  --dest-tls-verify=${{ inputs.destination-tls }} \
-                  --dest-creds=${{ inputs.destination-credentials }} \
-                  ${{ inputs.source-transport }}${SOURCE_DELIMITER}${{ inputs.source }}:$version \
-                  ${{ inputs.destination-transport }}${DESTINATION_DELIMITER}${{ inputs.destination }}:$version
+          skopeo inspect docker://${{ inputs.destination }}:$version >/dev/null 2>&1
+          image_exists=$?
 
+          if [ "$image_exists" = "0" ]; then
+              break
+          fi
+
+          regctl image copy \
+              ${{ inputs.source }}:$version \
+              ${{ inputs.destination }}:$version
       done
 
