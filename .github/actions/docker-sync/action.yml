@@ -48,7 +48,7 @@ inputs:
   skopeo-version:
     description: The version of skopeo to use
     required: false
-    default: '1.16.1'
+    default: '1.16.0'
 runs:
   using: composite
   steps:
