@@ -68,7 +68,7 @@ runs:
         DESTINATION_DELIMITER=":"
       fi
 
-      VERSIONS="$(skopeo list-tags ${{ inputs.source-transport }}}${SOURCE_DELIMITER}${{ inputs.source }} | jq -r ".Tags[]" | sort --version-sort | tail -n ${{ inputs.max-tags }})"
+      VERSIONS="$(skopeo list-tags ${{ inputs.source-transport }}${SOURCE_DELIMITER}${{ inputs.source }} | jq -r ".Tags[]" | sort --version-sort | tail -n ${{ inputs.max-tags }})"
 
       echo "${VERSIONS}" | while read version ; do
 
