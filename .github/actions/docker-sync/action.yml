@@ -45,11 +45,19 @@ inputs:
     description: The maximum number of image tags to sync
     required: false
     default: '10'
+  skopeo-version:
+    description: The version of skopeo to use
+    required: false
+    default: '1.16.1'
 runs:
   using: composite
   steps:
   - shell: bash
     run: |
+      [ -f /usr/bin/skopeo ] && mv /usr/bin/skopeo{,_src}
+      wget https://github.com/lework/skopeo-binary/releases/download/v${{ inputs.skopeo-version }}/skopeo-linux-amd64 -O /usr/bin/skopeo
+      chmod +x /usr/bin/skopeo
+
       skopeo --version
 
       if [ "${{ inputs.source-transport }}" = "dir" ]; then
