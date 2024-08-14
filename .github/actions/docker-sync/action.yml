@@ -25,6 +25,7 @@ runs:
   - name: Sync images
     shell: bash
     run: |
+      set -e -o pipefail
       skopeo --version
 
       VERSIONS="$(skopeo list-tags docker://${{ inputs.source }} | jq -r ".Tags[]" | sort --version-sort | tail -n ${{ inputs.max-tags }})"
