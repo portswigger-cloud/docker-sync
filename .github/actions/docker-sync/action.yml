@@ -1,6 +1,5 @@
 name: 'Docker Sync Action'
 description: 'Keeps docker images in sync between registries or repositories'
-author: 'Pavel Titenkov / Tim Birkett.'
 
 branding:
   icon: 'package'
