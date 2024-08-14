@@ -54,11 +54,10 @@ runs:
   steps:
   - shell: bash
     run: |
-      [ -f /usr/bin/skopeo ] && mv /usr/bin/skopeo{,_src}
-      wget https://github.com/lework/skopeo-binary/releases/download/v${{ inputs.skopeo-version }}/skopeo-linux-amd64 -O /usr/bin/skopeo
-      chmod +x /usr/bin/skopeo
+      wget https://github.com/lework/skopeo-binary/releases/download/v${{ inputs.skopeo-version }}/skopeo-linux-amd64 -O ./skopeo
+      chmod +x ./skopeo
 
-      skopeo --version
+      ./skopeo --version
 
       if [ "${{ inputs.source-transport }}" = "dir" ]; then
         SOURCE_DELIMITER=":/"
@@ -76,7 +75,7 @@ runs:
         DESTINATION_DELIMITER=":"
       fi
 
-      VERSIONS="$(skopeo list-tags ${{ inputs.source-transport }}${SOURCE_DELIMITER}${{ inputs.source }} | jq -r ".Tags[]" | sort --version-sort | tail -n ${{ inputs.max-tags }})"
+      VERSIONS="$(./skopeo list-tags ${{ inputs.source-transport }}${SOURCE_DELIMITER}${{ inputs.source }} | jq -r ".Tags[]" | sort --version-sort | tail -n ${{ inputs.max-tags }})"
 
       echo "${VERSIONS}" | while read version ; do
 
@@ -85,8 +84,8 @@ runs:
           fi
 
           # Only copy if it isn't there already.
-          skopeo inspect ${{ inputs.destination-transport }}${DESTINATION_DELIMITER}${{ inputs.destination }}:$version >/dev/null 2>&1 \
-              || skopeo copy --multi-arch all \
+          ./skopeo inspect ${{ inputs.destination-transport }}${DESTINATION_DELIMITER}${{ inputs.destination }}:$version >/dev/null 2>&1 \
+              || ./skopeo copy --multi-arch all \
                   --format ${{ inputs.format }} \
                   --src-tls-verify=${{ inputs.source-tls }} \
                   --src-creds=${{ inputs.source-credentials }} \
