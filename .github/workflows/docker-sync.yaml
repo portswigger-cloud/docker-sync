@@ -28,7 +28,7 @@ jobs:
       - name: Sync ${{ matrix.docker-repo }} images
         uses: portswigger-cloud/docker-sync/.github/actions/docker-sync@main
         with:
-          max-tags: '30'
+          max-tags: '35'
           source: ${{ matrix.docker-repo }}
           destination: ghcr.io/${{ github.repository_owner }}/${{ matrix.docker-repo }}
 
