@@ -80,7 +80,7 @@ runs:
       echo -e "${YELLOW}> 📦 Transfer docker images from ${{ inputs.source }} to ${{ inputs.destination }} ${BLANK}"
 
       VERSIONS="${{ inputs.versions }}"
-      if [ "${VERSIONS}" = "" && "${{ inputs.max-tags }}" != "0" ]; then
+      if [ "${VERSIONS}" = ""] && ["${{ inputs.max-tags }}" != "0" ]; then
           VERSIONS="$(skopeo list-tags ${{ inputs.source-transport }}}${SOURCE_DELIMITER}${{ inputs.source }} | jq -r ".Tags[]" | sort --version-sort | tail -n ${{ inputs.max-tags }})"
       fi
 
