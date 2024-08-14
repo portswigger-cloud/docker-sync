@@ -16,7 +16,8 @@ jobs:
         - loopingz/smtp-relay
         - tonistiigi/binfmt
         - defectdojo/defectdojo-django
-
+        - defectdojo/defectdojo-nginx
+        
     permissions:
       actions: read
       contents: read
