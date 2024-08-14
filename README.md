@@ -5,7 +5,7 @@ This repo contains a list of images that are synced from DockerHub to ghcr.io.
 Generally, you should not use this repo for syncing images. You should:
 
 1. Seek out alternative sources for official images
-2. Understand whether it needs syncing at all - Some images are unlimited through our Docker Sponsored Open Source and Docker Verified Publisher programs.
+2. Understand whether it needs syncing at all - Some images are unlimited through the Docker Sponsored Open Source and Docker Verified Publisher programs.
 
 This is the last resort and may suffer from missing image tags and may stop working altogether.
 
