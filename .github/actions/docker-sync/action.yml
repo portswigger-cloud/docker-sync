@@ -36,8 +36,8 @@ runs:
               break
           fi
 
-          if [ "$version" = "latest" ]; then
-              # Always copy "latest"
+          if [ "$version" = "latest" ] || [ "$version" = "stable" ]; then
+              # Always copy "latest" and "stable"
               regctl image copy \
                   ${{ inputs.source }}:$version \
                   ${{ inputs.destination }}:$version
