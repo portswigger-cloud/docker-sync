@@ -18,6 +18,7 @@ jobs:
         - defectdojo/defectdojo-django
         - defectdojo/defectdojo-nginx
         - returntocorp/semgrep
+        - bitnami/node-exporter
         
     permissions:
       actions: read
