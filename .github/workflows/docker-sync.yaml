@@ -19,6 +19,7 @@ jobs:
         - defectdojo/defectdojo-nginx
         - returntocorp/semgrep
         - bitnami/node-exporter
+        - prom/memcached-exporter
         
     permissions:
       actions: read
