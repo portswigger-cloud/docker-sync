@@ -49,17 +49,17 @@ runs:
 
           if [ "$version" = "latest" ] || [ "$version" = "stable" ]; then
               # Always copy "latest" and "stable"
-              regctl image copy \
+              (regctl image copy \
                   ${{ inputs.source }}:$version \
-                  ${{ inputs.destination }}:$version || let "error_count++"
+                  ${{ inputs.destination }}:$version || let "error_count++")
               continue
           fi
 
           # Only copy if it isn't there already
           skopeo inspect docker://${{ inputs.destination }}:$version >/dev/null 2>&1 || \
-          regctl image copy \
+          (regctl image copy \
               ${{ inputs.source }}:$version \
-              ${{ inputs.destination }}:$version || let "error_count++"
+              ${{ inputs.destination }}:$version || let "error_count++")
 
       done
 
