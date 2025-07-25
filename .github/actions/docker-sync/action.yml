@@ -42,7 +42,7 @@ runs:
           if [ "$version" = "" ]; then
               break
           fi
-          if [ "$error_count" -gt "${{ imputs.max-errors }}" ]; then
+          if [ "$error_count" -gt "${{ inputs.max-errors }}" ]; then
               echo "::error:: Errors copying images from ${{ inputs.source }} exceeded the maximum allowed."
               exit 1
           fi
