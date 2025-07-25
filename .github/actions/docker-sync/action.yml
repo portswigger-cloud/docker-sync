@@ -51,7 +51,7 @@ runs:
               # Always copy "latest" and "stable"
               (regctl image copy \
                   ${{ inputs.source }}:$version \
-                  ${{ inputs.destination }}:$version || let "error_count++")
+                  ${{ inputs.destination }}:$version || ((error_count++)) )
               continue
           fi
 
@@ -59,7 +59,7 @@ runs:
           skopeo inspect docker://${{ inputs.destination }}:$version >/dev/null 2>&1 || \
           (regctl image copy \
               ${{ inputs.source }}:$version \
-              ${{ inputs.destination }}:$version || let "error_count++")
+              ${{ inputs.destination }}:$version || ((error_count++)) )
 
       done
 
