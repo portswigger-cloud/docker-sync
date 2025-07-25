@@ -35,10 +35,6 @@ runs:
           if [ "$version" = "" ]; then
               break
           fi
-          if [ "$error_count" -gt "${{ inputs.max-errors }}" ]; then
-              echo "::error:: Errors copying images from ${{ inputs.source }} exceeded the maximum allowed."
-              exit 1
-          fi
 
           if [ "$version" = "latest" ] || [ "$version" = "stable" ]; then
               # Always copy "latest" and "stable"
