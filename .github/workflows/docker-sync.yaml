@@ -20,6 +20,10 @@ jobs:
         - returntocorp/semgrep
         - bitnami/node-exporter
         - prom/memcached-exporter
+        - grafana/loki
+        - grafana/mimir
+        - grafana/tempo
+        - grafana/alloy
         
     permissions:
       actions: read
