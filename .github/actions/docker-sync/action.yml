@@ -16,10 +16,6 @@ inputs:
     description: The maximum number of image tags to sync
     required: false
     default: '10'
-  max-errors:
-    description: maximimum number of errors to tolerate before failure
-    required: false
-    default: '5'
 
 runs:
   using: composite
@@ -29,13 +25,10 @@ runs:
   - name: Sync images
     shell: bash
     run: |
-      #!/usr/bin/env bash
       set -ux -o pipefail
       skopeo --version
 
       VERSIONS="$(skopeo list-tags docker://${{ inputs.source }} | jq -r '.Tags[] | scan("latest|stable|.*[0-9]+\\.[0-9]+\\.[0-9]+.*")' | sort --version-sort | uniq | tail -n ${{ inputs.max-tags }})"
-
-      error_count=0
 
       echo "${VERSIONS}" | while read version ; do
 
@@ -49,17 +42,17 @@ runs:
 
           if [ "$version" = "latest" ] || [ "$version" = "stable" ]; then
               # Always copy "latest" and "stable"
-              (regctl image copy \
+              regctl image copy \
                   ${{ inputs.source }}:$version \
-                  ${{ inputs.destination }}:$version || ((error_count++)) )
+                  ${{ inputs.destination }}:$version
               continue
           fi
 
           # Only copy if it isn't there already
           skopeo inspect docker://${{ inputs.destination }}:$version >/dev/null 2>&1 || \
-          (regctl image copy \
+          regctl image copy \
               ${{ inputs.source }}:$version \
-              ${{ inputs.destination }}:$version || ((error_count++)) )
+              ${{ inputs.destination }}:$version
 
       done
 
