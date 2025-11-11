@@ -28,7 +28,7 @@ runs:
       set -ux -o pipefail
       skopeo --version
 
-      VERSIONS="$(skopeo list-tags docker://${{ inputs.source }} | jq -r '.Tags[] | scan("latest|stable|.*[0-9]{4}\\.[0-9]{1,2}(?:\\.[0-9].*)")' | sort --version-sort | uniq | tail -n ${{ inputs.max-tags }})"
+      VERSIONS="$(skopeo list-tags docker://${{ inputs.source }} | jq -r '.Tags[] | scan("latest|stable|.*[0-9]+\\.[0-9]+\\.[0-9].*|[0-9]{4}\\.[0-9]{0,2}")' | sort --version-sort | uniq | tail -n ${{ inputs.max-tags }})"
 
       echo "${VERSIONS}" | while read version ; do
 
