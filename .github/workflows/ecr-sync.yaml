@@ -22,8 +22,6 @@ jobs:
     permissions:
       actions: read
       contents: read
-      packages: write
-      id-token: write
 
     steps:
       - name: Login to Docker Hub
