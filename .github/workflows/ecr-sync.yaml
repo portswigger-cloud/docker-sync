@@ -1,0 +1,39 @@
+name: Docker Sync
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 * * * *"
+
+jobs:
+  docker-sync:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ecr-repo:
+          - web-server
+          - enterprise-server
+          - enterprise-scan-container
+          - portswigger-hosted-scan
+          - scan-controller
+          - relay
+
+    permissions:
+      actions: read
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Sync ${{ matrix.ecr-repo }} images
+        uses: portswigger-cloud/docker-sync/.github/actions/docker-sync@main
+        with:
+          max-tags: '20'
+          source: public.ecr.aws/portswigger/${{ matrix.ecr-repo }}
+          destination: portswigger/${{ matrix.ecr-repo }}
