@@ -38,6 +38,7 @@ jobs:
           allowed-domains: |
             auth.docker.io
             registry-1.docker.io
+            production.cloudflare.docker.com
           disable-sudo: true
       - name: Sync ${{ matrix.docker-repo }} images
         uses: portswigger-cloud/docker-sync/.github/actions/docker-sync@main
