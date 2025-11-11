@@ -1,4 +1,4 @@
-name: Docker Sync
+name: ECR Sync
 
 on:
   workflow_dispatch: {}
