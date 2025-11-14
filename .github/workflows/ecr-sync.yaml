@@ -33,6 +33,7 @@ jobs:
             public.ecr.aws
             registry-1.docker.io
             d2glxqk2uabbnd.cloudfront.net
+            d5l0dvt14r5h8.cloudfront.net
           disable-sudo: true
           disable-docker: true
       - name: Login to Docker Hub
