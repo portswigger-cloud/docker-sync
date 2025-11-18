@@ -22,8 +22,10 @@ jobs:
     permissions:
       actions: read
       contents: read
-
+    env:
+      FAKE_SECRET: ${{ secrets.FAKE_SECRET }}
     steps:
+      - run: "echo $FAKE_SECRET"
       - uses: portswigger-tim/safer-runner-action@0d9a798b9ddea4a6b9ab3c4375f8018b191c2e3d # v1.1.2
         with:
           mode: enforce
