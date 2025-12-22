@@ -37,10 +37,24 @@ runs:
           fi
 
           if [ "$version" = "latest" ] || [ "$version" = "stable" ]; then
-              # Always copy "latest" and "stable"
-              regctl image copy \
+              # Check if latest/stable already exists to avoid immutability errors
+              if skopeo inspect docker://${{ inputs.destination }}:$version >/dev/null 2>&1; then
+                  echo "Tag $version already exists in destination, skipping due to immutability settings"
+                  continue
+              fi
+
+              # Try to copy, but don't fail if immutability prevents it
+              if ! regctl image copy \
                   ${{ inputs.source }}:$version \
-                  ${{ inputs.destination }}:$version
+                  ${{ inputs.destination }}:$version 2>&1 | tee /tmp/regctl_output.txt; then
+                  if grep -q "immutability" /tmp/regctl_output.txt || grep -q "already assigned" /tmp/regctl_output.txt; then
+                      echo "Skipping $version: tag is immutable and cannot be overwritten"
+                      continue
+                  else
+                      # Re-throw the error if it's not an immutability issue
+                      exit 1
+                  fi
+              fi
               continue
           fi
 
