@@ -47,3 +47,4 @@ jobs:
           max-tags: '20'
           source: public.ecr.aws/portswigger/${{ matrix.ecr-repo }}
           destination: portswigger/${{ matrix.ecr-repo }}
+          immutable-repo: 'true'
