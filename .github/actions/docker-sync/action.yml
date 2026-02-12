@@ -16,6 +16,15 @@ inputs:
     description: The maximum number of image tags to sync
     required: false
     default: '10'
+  mutable-tags:
+    description: Comma-separated list of tags that are mutable and should be overwritten if they already exist in the destination repository. By default, latest and stable tags are considered mutable.
+    required: false
+    default: 'latest,stable'
+  immutable-repo:
+    description: Whether the destination repository is immutable (e.g. AWS ECR) and should ignore mutable-tags.
+    required: false
+    default: 'false'
+
 
 runs:
   using: composite
@@ -36,26 +45,16 @@ runs:
               break
           fi
 
-          if [ "$version" = "latest" ] || [ "$version" = "stable" ]; then
-              # Check if latest/stable already exists to avoid immutability errors
-              if skopeo inspect docker://${{ inputs.destination }}:$version >/dev/null 2>&1; then
-                  echo "Tag $version already exists in destination, skipping due to immutability settings"
+          if [[ "${{ inputs.mutable-tags }}" =~ (^|,)$version(,|$) ]]; then
+              if [ "${{ inputs.immutable-repo }}" = "true" ]; then
+                  echo "Skipping mutable $version tag due to immutability settings"
                   continue
               fi
 
-              # Try to copy, but don't fail if immutability prevents it
-              if ! regctl image copy \
+              # Always copy mutable tags if the repo is mutable.
+              regctl image copy \
                   ${{ inputs.source }}:$version \
-                  ${{ inputs.destination }}:$version 2>&1 | tee /tmp/regctl_output.txt; then
-                  if grep -q "immutability" /tmp/regctl_output.txt || grep -q "already assigned" /tmp/regctl_output.txt; then
-                      echo "Skipping $version: tag is immutable and cannot be overwritten"
-                      continue
-                  else
-                      # Re-throw the error if it's not an immutability issue
-                      exit 1
-                  fi
-              fi
-              continue
+                  ${{ inputs.destination }}:$version
           fi
 
           # Only copy if it isn't there already
